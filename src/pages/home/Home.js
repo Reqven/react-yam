@@ -2,6 +2,7 @@ import './Home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
+import YamResults from '../../components/yam-results/YamResults'
 import Yam from '../../utils/Yam';
 
 
@@ -35,25 +36,28 @@ export class Home extends Component {
     const { input, number, data, results } = this.state;
     return (
       <Card>
-        <Card.Body>
-          <Form onSubmit={this.handleSubmit}>
-            <Form.Group>
-              <Form.Label>Number of throws</Form.Label>
-              <Form.Control required type="number" placeholder="Number" value={input || ""} onChange={this.handleInput} />
-              <Form.Text className="text-muted">For this round, 5 dices will be thrown {input || "x"} times.</Form.Text>
-            </Form.Group>
-            <Button size="sm" type="submit">Throw</Button>
-          </Form>
-        </Card.Body>
+        <div class="form">
+          <Card.Body>
+            <Form onSubmit={this.handleSubmit}>
+              <Form.Group>
+                <Form.Label>Number of throws</Form.Label>
+                <Form.Control required type="number" placeholder="Number" value={input || ""} onChange={this.handleInput} />
+                <Form.Text className="text-muted">For this round, 5 dices will be thrown {input || "x"} times.</Form.Text>
+              </Form.Group>
+              <Button size="sm" type="submit">Throw</Button>
+            </Form>
+          </Card.Body>
+        </div>
 
         {number &&
-          <Card.Body>
-            <div className="d-flex justify-content-between align-items-center">
+          <div className="results">
+            <hr/>
+            <Card.Body className="py-0">
               <h5 className="mb-0">Results</h5>
-            </div>
-            <p>{JSON.stringify(data)}</p>
-            <p>{JSON.stringify(results)}</p>
-          </Card.Body>
+              <p className="code">{JSON.stringify(data)}</p>
+            </Card.Body>
+            <YamResults results={results} />
+          </div>
         }
       </Card>
     )
