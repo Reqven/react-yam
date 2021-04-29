@@ -3,10 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react'
 import { HashRouter, NavLink, Route } from 'react-router-dom';
 import { Container, Nav } from 'react-bootstrap';
+import { Home, History, Stats } from './pages';
 import Firebase, { FirebaseContext } from './utils/Firebase';
-import { History } from './pages/history/History'
-import { Home } from './pages/home/Home'
-import { Stats } from './pages/stats/Stats'
 
 
 export default class App extends Component {

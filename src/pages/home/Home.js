@@ -7,7 +7,7 @@ import YamResults from '../../components/yam-results/YamResults'
 import Yam from '../../utils/Yam';
 
 
-export class Home extends Component {
+export default class Home extends Component {
 
   static contextType = FirebaseContext;
 
