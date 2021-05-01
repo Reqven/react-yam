@@ -5,3 +5,9 @@
   margin: 1rem 0;
   padding: .5rem;
 }
+
+.spinner-border-md {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  border-width: .2em !important;
+}
