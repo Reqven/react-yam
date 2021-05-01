@@ -103,7 +103,7 @@ export default class Home extends Component {
               </div>
               <p className="code">{JSON.stringify(Yam.data)}</p>
             </Card.Body>
-            <YamResults results={Yam.results} />
+            <YamResults yam={Yam} />
           </div>
         }
 

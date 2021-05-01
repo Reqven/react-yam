@@ -1,5 +1,6 @@
 const initialState = {
   id: undefined,
+  time: undefined,
   saved: false,
   data: [],
   results: {}
@@ -13,7 +14,7 @@ export default class Yam {
 
   play(throws = 1) {
     this.reset();
-    this.id = new Date().getTime();
+    this.id = this.time = new Date().getTime();
     this.data = [...Array(throws)].map(() => Yam.dice(5));
     return this.calc();
   }
@@ -35,10 +36,10 @@ export default class Yam {
 
   static from(obj) {
     const yam = new Yam();
-    const { id, saved, data } = obj;
-    const b = { id, saved, data };
+    const { id, time, saved, data } = obj;
+    const b = { id, time, saved, data };
 
-    Object.assign(b, yam);
+    Object.assign(yam, b);
     return yam.calc();
   }
 

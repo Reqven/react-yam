@@ -11,15 +11,17 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
+    const firebase = new Firebase();
+
     this.state = {
       ready: false,
-      initialized: false
+      initialized: false,
+      promise: firebase.setup()
     };
   }
 
   componentDidMount () {
-    const firebase = new Firebase();
-    firebase.setup().then(ready => {
+    this.state.promise.then(ready => {
       this.setState({ initialized: true, ready });
     });
   }
