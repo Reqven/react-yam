@@ -2,15 +2,15 @@ import './Home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
-import { FirebaseContext } from '../../utils/Firebase'
-import FirebaseSDK from '@firebase/app';
-import YamResults from '../../components/yam-results/YamResults'
+import { UserContext } from '../../utils/Firebase'
+import Firebase from 'firebase/app';
 import Yam from '../../utils/Yam';
+import YamResults from '../../components/yam-results/YamResults'
 
 
 export default class Home extends Component {
 
-  static contextType = FirebaseContext;
+  static contextType = UserContext;
 
   constructor(props) {
     super(props);
@@ -48,15 +48,17 @@ export default class Home extends Component {
   }
 
   save() {
-    if (!this.context.ready) {
-      return;
-    }
+    const { user, isAuthenticated } = this.context;
+    if (!isAuthenticated()) { return; }
+
     const yam = this.Yam.save();
     const { id: time, data } = yam;
-    const path = `history/${time}`;
 
-    FirebaseSDK.database()
-      .ref(path)
+    Firebase.database()
+      .ref('users')
+      .child(user.uid)
+      .child('history')
+      .child(time)
       .set({ time, data })
       .then(() => this.setState({ yam }))
   }
@@ -64,13 +66,14 @@ export default class Home extends Component {
   render() {
     const Yam = this.Yam;
     const { autoSave, number } = this.state;
-    const { initialized, ready } = this.context;
-    const saveDisabled = !ready || Yam.saved;
+    const saveDisabled = !this.context.isAuthenticated();
+    const canBeSaved = !Yam.saved && this.context.isAuthenticated();
 
     return (
       <Card>
         <div className="form">
           <Card.Body>
+            <Card.Title>Play</Card.Title>
             <Form onSubmit={this.handleSubmit}>
               <Form.Group>
                 <Form.Label>Number of throws</Form.Label>
@@ -78,13 +81,7 @@ export default class Home extends Component {
                 <Form.Text className="text-muted">For this round, 5 dices will be thrown {number || 'x'} times.</Form.Text>
               </Form.Group>
               <Form.Group>
-                <Form.Check
-                  type="checkbox"
-                  label="Auto-save results"
-                  defaultChecked={autoSave}
-                  disabled={!ready}
-                  onChange={this.handleCheckbox}
-                />
+                <Form.Check type="checkbox" label="Auto-save results" defaultChecked={autoSave} disabled={saveDisabled} onChange={this.handleCheckbox} />
               </Form.Group>
               <Button size="sm" type="submit">Throw</Button>
             </Form>
@@ -97,7 +94,7 @@ export default class Home extends Component {
             <Card.Body className="py-0">
               <div className="d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">Results</h5>
-                <Button size="sm" disabled={saveDisabled} onClick={() => this.save()}>
+                <Button size="sm" disabled={!canBeSaved} onClick={() => this.save()}>
                   {Yam.saved ? 'Saved' : 'Save'}
                 </Button>
               </div>
@@ -106,14 +103,6 @@ export default class Home extends Component {
             <YamResults yam={Yam} />
           </div>
         }
-
-        <Card.Footer className="text-muted">
-          <small>{!initialized ? 'Initializing Firebase..' : ready
-            ? 'Firebase is initialized, you can save your games.'
-            : 'Firebase is not initialized, saving functionality is disabled.'
-          }
-          </small>
-        </Card.Footer>
       </Card>
     )
   }

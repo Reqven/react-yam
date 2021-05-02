@@ -1,6 +1,7 @@
 import React from 'react';
-import FirebaseSDK from '@firebase/app';
-import '@firebase/database';
+import Firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
 
 const config = {
@@ -14,37 +15,6 @@ const config = {
   appId: ''
 };
 
-class Firebase {
+Firebase.initializeApp(config);
 
-  setup() {
-    const initialize = () => {
-      try {
-        FirebaseSDK.initializeApp(config);
-        FirebaseSDK.database();
-        return this.isReadable();
-      } catch(e) {
-        console.log('Error: Unable to initialize Firebase, please check your config', e);
-        return Promise.resolve(false);
-      }
-    }
-    if (!this.isInitialized()) {
-      return initialize();
-    }
-    return FirebaseSDK
-      .app().delete()
-      .then(() => initialize());
-  }
-
-  isInitialized() {
-    return Boolean(FirebaseSDK.apps.length);
-  }
-
-  isReadable() {
-    return fetch(config.databaseURL + '/data.json')
-      .then(response => Promise.resolve(response.ok))
-      .catch(() => Promise.resolve(false));
-  }
-}
-
-export default Firebase;
-export const FirebaseContext = React.createContext(null);
+export const UserContext = React.createContext({ user: null });

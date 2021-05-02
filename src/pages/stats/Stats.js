@@ -3,21 +3,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
 import * as moment from 'moment'
 import { Card } from 'react-bootstrap'
-import FirebaseSDK from '@firebase/app'
-import { FirebaseContext } from '../../utils/Firebase'
+import { UserContext } from '../../utils/Firebase'
 import Yam from '../../utils/Yam'
 import YamResults from '../../components/yam-results/YamResults'
 import LoadingWidget from '../../components/loading-widget/LoadingWidget'
+import Firebase from 'firebase/app'
 
 
 export default class Stats extends Component {
 
-  static contextType = FirebaseContext;
+  static contextType = UserContext;
 
   constructor(props) {
     super(props);
 
     this.state = {
+      error: false,
       loading: true,
       yam: null,
       count: null,
@@ -25,34 +26,46 @@ export default class Stats extends Component {
     };
   }
 
-  initialize() {
-    this.reference = FirebaseSDK.database().ref('history');
-    this.reference.on('value', (snapshot) => {
-
-      const values = Object.values(snapshot.val() || {});
-      const lastPlayed = values[values.length - 1]?.time;
-      const count = values.length;
-
-      const data = values.map(a => a.data || []).flat();
-      const yam = Yam.from({data});
-
-      setTimeout(() => {
-        this.setState({ yam, count, lastPlayed, loading: false });
-      }, 500);
-    });
-  }
-
   componentDidMount() {
-    this.context.promise.then(ready => !ready
-      ? this.setState({ loading: false })
-      : this.initialize()
-    );
+    const { user } = this.context;
+
+    this.timeout = setTimeout(() => {
+      this.reference = Firebase.database()
+        .ref('users')
+        .child(user.uid)
+        .child('history');
+
+      this.reference.on('value', this.handleSnapshot, this.handleError);
+    }, 500);
   }
 
   componentWillUnmount() {
+    clearTimeout(this.timeout);
     if (this.reference) {
       this.reference.off();
     }
+  }
+
+  handleSnapshot = (snapshot) => {
+    const state = {
+      error: false,
+      loading: false
+    };
+    const values = Object.values(snapshot.val() || {});
+    const lastPlayed = values[values.length - 1]?.time;
+    const count = values.length;
+
+    const data = values.map(a => a.data || []).flat();
+    const yam = Yam.from({data});
+    this.setState({...state, yam, count, lastPlayed });
+  }
+
+  handleError = (error) => {
+    console.log(error);
+    this.setState({
+      error: true,
+      loading: false
+    });
   }
 
   get lastPlayed() {
@@ -62,8 +75,7 @@ export default class Stats extends Component {
   }
 
   render() {
-    const { loading, count, yam } = this.state;
-    const { ready } = this.context;
+    const { loading, count, yam, error } = this.state;
 
     return (
       <Card>
@@ -77,9 +89,9 @@ export default class Stats extends Component {
         <Card.Footer>
           {loading
             ? <LoadingWidget variant="primary" />
-            : <small className="text-muted">{ready
-                ? `Last played: ${this.lastPlayed}`
-                : 'Unable to load statistics from Firebase'
+            : <small className="text-muted">{error
+                ? 'Unable to load statistics from Firebase'
+                : `Last played: ${this.lastPlayed}`
               }</small>
           }
         </Card.Footer>
