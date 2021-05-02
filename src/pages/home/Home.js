@@ -1,6 +1,6 @@
 import './Home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
 import { UserContext } from '../../utils/Firebase'
 import Firebase from 'firebase/app';
@@ -70,40 +70,49 @@ export default class Home extends Component {
     const canBeSaved = !Yam.saved && this.context.isAuthenticated();
 
     return (
-      <Card>
-        <div className="form">
-          <Card.Body>
-            <Card.Title>Play</Card.Title>
-            <Form onSubmit={this.handleSubmit}>
-              <Form.Group>
-                <Form.Label>Number of throws</Form.Label>
-                <Form.Control required type="number" placeholder="Number" value={number || ''} onChange={this.handleInput} />
-                <Form.Text className="text-muted">For this round, 5 dices will be thrown {number || 'x'} times.</Form.Text>
-              </Form.Group>
-              <Form.Group>
-                <Form.Check type="checkbox" label="Auto-save results" defaultChecked={autoSave} disabled={saveDisabled} onChange={this.handleCheckbox} />
-              </Form.Group>
-              <Button size="sm" type="submit">Throw</Button>
-            </Form>
-          </Card.Body>
+      <Fragment>
+        <div className="header">
+          <h1>Play</h1>
+          <p>
+            The objective of the game is to score points by rolling five dice to make certain
+            combinations. To try to make various scoring combinations, you can choose how many
+            times the five dice must be rolled. A Yam is five-of-a-kind.
+          </p>
         </div>
-
-        {Yam.id &&
-          <div className="results">
-            <hr/>
-            <Card.Body className="py-0">
-              <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">Results</h5>
-                <Button size="sm" disabled={!canBeSaved} onClick={() => this.save()}>
-                  {Yam.saved ? 'Saved' : 'Save'}
-                </Button>
-              </div>
-              <p className="code">{JSON.stringify(Yam.data)}</p>
+        <Card>
+          <div className="form">
+            <Card.Body>
+              <Form onSubmit={this.handleSubmit}>
+                <Form.Group>
+                  <Form.Label>Number of dice rolls</Form.Label>
+                  <Form.Control required type="number" placeholder="Number" value={number || ''} onChange={this.handleInput} />
+                  <Form.Text className="text-muted">For this game, the five dice will be rolled {number || 'x'} times.</Form.Text>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Check id="switch" type="switch" label="Auto-save" defaultChecked={autoSave} disabled={saveDisabled} onChange={this.handleCheckbox} />
+                </Form.Group>
+                <Button size="sm" type="submit">Roll dice</Button>
+              </Form>
             </Card.Body>
-            <YamResults yam={Yam} />
           </div>
-        }
-      </Card>
+
+          {Yam.id &&
+            <div className="results">
+              <hr className="mt-0"/>
+              <Card.Body className="py-0">
+                <div className="d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">Results</h5>
+                  <Button size="sm" disabled={!canBeSaved} onClick={() => this.save()}>
+                    {Yam.saved ? 'Saved' : 'Save'}
+                  </Button>
+                </div>
+                <p className="code">{JSON.stringify(Yam.data)}</p>
+              </Card.Body>
+              <YamResults yam={Yam} />
+            </div>
+          }
+        </Card>
+      </Fragment>
     )
   }
 }

@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { Fragment } from 'react'
 import { Button } from 'react-bootstrap';
 import YamResults from '../yam-results/YamResults'
 import * as moment from 'moment'
 
 
 const YamListItem = ({ yam }) => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = React.useState(true);
 
   return (
     <div className="list-group-item">
@@ -19,10 +19,10 @@ const YamListItem = ({ yam }) => {
         </Button>
       </div>
       {!collapsed &&
-        <React.Fragment>
+        <Fragment>
           <p className="code">{JSON.stringify(yam.data)}</p>
           <YamResults yam={yam} />
-        </React.Fragment>
+        </Fragment>
       }
     </div>
   )

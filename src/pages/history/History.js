@@ -1,6 +1,6 @@
 import './History.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Card } from 'react-bootstrap';
 import Firebase from 'firebase/app';
 import { UserContext } from '../../utils/Firebase'
@@ -47,13 +47,11 @@ export default class History extends Component {
   handleSnapshot = (snapshot) => {
     const state = {
       error: false,
-      loading: false
-    };
-    if (snapshot.exists()) {
-      state.games = Object.entries(snapshot.val())
+      loading: false,
+      games: Object.entries(snapshot.val() || {})
         .map(([id, data]) => Yam.from({...data, id}))
-        .sort((a, b) => b.time - a.time);
-    }
+        .sort((a, b) => b.time - a.time)
+    };
     this.setState(state);
   }
 
@@ -69,24 +67,30 @@ export default class History extends Component {
     const { games, error, loading } = this.state;
 
     return (
-      <Card>
-        <Card.Body>
-          <Card.Title>History</Card.Title>
-          <Card.Text>Review your saved games.</Card.Text>
-        </Card.Body>
-        <Card.Footer>
-          {loading
-            ? <LoadingWidget variant="primary"/>
-            : <small className="text-muted">{error
-                ? 'Unable to load game history from Firebase'
-                : (games.length > 0 ? `${games.length} games found` : 'No games found')
-              }</small>
-          }
-        </Card.Footer>
-        <div className="list-group list-group-flush">
-          {games.map(yam => <YamListItem key={yam.id} yam={yam} />)}
+      <Fragment>
+        <div className="header">
+          <h1>History</h1>
+          <p>
+            Every game you've saved on the main page will be displayed here. You can click
+            on the "Details" button to collapse a specific game in order to review the
+            dataset with all the dice and the results associated.
+          </p>
         </div>
-      </Card>
+        <Card>
+          <Card.Header>
+            {loading
+              ? <LoadingWidget variant="primary"/>
+              : <small className="text-muted">{error
+                  ? 'Unable to load game history from Firebase'
+                  : (games.length > 0 ? `${games.length} games found` : 'No games found')
+                }</small>
+            }
+          </Card.Header>
+          <div className="list-group list-group-flush">
+            {games.map(yam => <YamListItem key={yam.id} yam={yam} />)}
+          </div>
+        </Card>
+      </Fragment>
     )
   }
 }

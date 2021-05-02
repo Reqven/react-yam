@@ -1,6 +1,6 @@
 import './Stats.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import * as moment from 'moment'
 import { Card } from 'react-bootstrap'
 import { UserContext } from '../../utils/Firebase'
@@ -68,6 +68,12 @@ export default class Stats extends Component {
     });
   }
 
+  get countPlayed() {
+    const { count } = this.state;
+    if (!count) return 'No games played';
+    return `${count} games played`;
+  }
+
   get lastPlayed() {
     const { lastPlayed } = this.state;
     if (!lastPlayed) return 'Never';
@@ -75,27 +81,37 @@ export default class Stats extends Component {
   }
 
   render() {
-    const { loading, count, yam, error } = this.state;
+    const { loading, yam, error } = this.state;
 
     return (
-      <Card>
-        <React.Fragment>
-          <Card.Body>
-            <Card.Title><span className="badge badge-pill badge-primary">{count}</span> Games played</Card.Title>
-            <Card.Text>Global statistics on all the games you've saved.</Card.Text>
-          </Card.Body>
-          {yam && <YamResults yam={yam} />}
-        </React.Fragment>
-        <Card.Footer>
-          {loading
-            ? <LoadingWidget variant="primary" />
-            : <small className="text-muted">{error
-                ? 'Unable to load statistics from Firebase'
-                : `Last played: ${this.lastPlayed}`
-              }</small>
+      <Fragment>
+        <div className="header">
+          <h1>Stats</h1>
+          <p>
+            Here you can find the statistics about all the different combinations and
+            how many times you've obtained each of them from all the games you've saved.
+          </p>
+        </div>
+        <Card>
+          {!loading &&
+            <Fragment>
+              <Card.Body>
+                <Card.Title className="my-0">{this.countPlayed}</Card.Title>
+              </Card.Body>
+              {yam && <YamResults yam={yam}/>}
+            </Fragment>
           }
-        </Card.Footer>
-      </Card>
+          <Card.Footer>
+            {loading
+              ? <LoadingWidget variant="primary" />
+              : <small className="text-muted">{error
+                  ? 'Unable to load statistics from Firebase'
+                  : `Last played: ${this.lastPlayed}`
+                }</small>
+            }
+          </Card.Footer>
+        </Card>
+      </Fragment>
     )
   }
 }

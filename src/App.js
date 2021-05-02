@@ -54,39 +54,38 @@ export default class App extends Component {
     return (
       <Router>
         <UserContext.Provider value={this.UserContext}>
-          <Navbar collapseOnSelect bg="dark" variant="dark" expand="sm">
-            <Navbar.Brand>Yam</Navbar.Brand>
-            <Navbar.Toggle/>
-            {!initialized
-              ? LoadingNavbar
-              : <Navbar.Collapse>
-                  <Nav className="mr-auto">
-                    <Nav.Link exact eventKey={0} as={NavLink} to={Routes.HOME}>Play</Nav.Link>
-                    <Nav.Link exact eventKey={1} as={NavLink} to={Routes.HISTORY}>History</Nav.Link>
-                    <Nav.Link exact eventKey={2} as={NavLink} to={Routes.STATS}>Stats</Nav.Link>
-                  </Nav>
-                  <Nav>{!isAuthenticated()
-                    ? <Nav.Link exact eventKey={3} as={NavLink} to={Routes.LOGIN}>Login</Nav.Link>
-                    : <NavDropdown title="Account" alignRight>
-                        <NavDropdown.Header>{user.email}</NavDropdown.Header>
-                        <NavDropdown.Item eventKey={4} onClick={() => Firebase.auth().signOut()}>Logout</NavDropdown.Item>
-                      </NavDropdown>
-                  }</Nav>
-                </Navbar.Collapse>
-            }
+          <Navbar collapseOnSelect bg="dark" variant="dark" expand="sm" sticky="top">
+            <Container>
+              <Navbar.Brand>Yam</Navbar.Brand>
+              <Navbar.Toggle/>
+              {!initialized
+                ? LoadingNavbar
+                : <Navbar.Collapse>
+                    <Nav className="mr-auto">
+                      <Nav.Link exact eventKey={0} as={NavLink} to={Routes.HOME}>Play</Nav.Link>
+                      <Nav.Link exact eventKey={1} as={NavLink} to={Routes.HISTORY}>History</Nav.Link>
+                      <Nav.Link exact eventKey={2} as={NavLink} to={Routes.STATS}>Stats</Nav.Link>
+                    </Nav>
+                    <Nav>{!isAuthenticated()
+                      ? <Nav.Link exact eventKey={3} as={NavLink} to={Routes.LOGIN}>Login</Nav.Link>
+                      : <NavDropdown title="Account" alignRight>
+                          <NavDropdown.Header>{user.email}</NavDropdown.Header>
+                          <NavDropdown.Item eventKey={4} onClick={() => Firebase.auth().signOut()}>Logout</NavDropdown.Item>
+                        </NavDropdown>
+                    }</Nav>
+                  </Navbar.Collapse>
+              }
+            </Container>
           </Navbar>
           {initialized &&
-            <Container>
-              <h1>Yam</h1>
-              <div className="content">
-                <Switch>
-                  <AuthenticatedRoute exact path={Routes.HISTORY} component={History} />
-                  <AuthenticatedRoute exact path={Routes.STATS} component={Stats} />
-                  <Route exact path={Routes.HOME} component={Home} />
-                  <Route exact path={Routes.LOGIN} component={Login} />
-                  <Redirect to={Routes.HOME} />
-                </Switch>
-              </div>
+            <Container className="content">
+              <Switch>
+                <AuthenticatedRoute exact path={Routes.HISTORY} component={History} />
+                <AuthenticatedRoute exact path={Routes.STATS} component={Stats} />
+                <Route exact path={Routes.HOME} component={Home} />
+                <Route exact path={Routes.LOGIN} component={Login} />
+                <Redirect to={Routes.HOME} />
+              </Switch>
             </Container>
           }
         </UserContext.Provider>
