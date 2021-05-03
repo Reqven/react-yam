@@ -3,15 +3,17 @@
 }
 
 .navbar > .container,
-.content.container {
+.content .container {
   max-width: var(--max-width);
 }
 
-.content {
-  margin: 2rem 0;
+.content > .container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
-.content .header {
-  margin: 2rem 0;
+
+.content > .container > .header {
+  margin-bottom: 2rem;
 }
 
 .code {

@@ -80,15 +80,17 @@ export default class App extends Component {
             </Container>
           </Navbar>
           {initialized &&
-            <Container className="content">
-              <Switch>
-                <AuthenticatedRoute exact path={Routes.HISTORY} component={History} />
-                <AuthenticatedRoute exact path={Routes.STATS} component={Stats} />
-                <Route exact path={Routes.HOME} component={Home} />
-                <Route exact path={Routes.LOGIN} component={Login} />
-                <Redirect to={Routes.HOME} />
-              </Switch>
-            </Container>
+            <div className="content">
+              <Container>
+                <Switch>
+                  <AuthenticatedRoute exact path={Routes.HISTORY} component={History} />
+                  <AuthenticatedRoute exact path={Routes.STATS} component={Stats} />
+                  <Route exact path={Routes.HOME} component={Home} />
+                  <Route exact path={Routes.LOGIN} component={Login} />
+                  <Redirect to={Routes.HOME} />
+                </Switch>
+              </Container>
+            </div>
           }
         </UserContext.Provider>
       </Router>
