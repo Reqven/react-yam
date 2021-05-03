@@ -1,6 +1,6 @@
 import './Home.css';
 import React, { Component, Fragment } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Card, Button, Form, Spinner } from 'react-bootstrap'
 import { UserContext } from '../../utils/Firebase'
 import Firebase from 'firebase/app';
 import Yam from '../../utils/Yam';
@@ -17,6 +17,7 @@ export default class Home extends Component {
     this.state = {
       number: undefined,
       autoSave: false,
+      pending: false,
       yam: new Yam()
     };
   }
@@ -50,23 +51,36 @@ export default class Home extends Component {
     const { user, isAuthenticated } = this.context;
     if (!isAuthenticated()) { return; }
 
-    const yam = this.Yam.save();
-    const { id: time, data } = yam;
+    this.setState({ pending: true });
+    const { id: time, data } = this.Yam;
+    const value = { time, data };
+
+    const onSuccess = () => {
+      const yam = this.Yam.save();
+      this.setState({ yam });
+    };
+    const onFinally = () => {
+      setTimeout(() => {
+        this.setState({ pending: false });
+      }, 500);
+    }
 
     Firebase.database()
       .ref('users')
       .child(user.uid)
       .child('history')
       .child(time)
-      .set({ time, data })
-      .then(() => this.setState({ yam }))
+      .set(value)
+        .then(onSuccess)
+        .catch(console.log)
+        .finally(onFinally);
   }
 
   render() {
     const Yam = this.Yam;
-    const { autoSave, number } = this.state;
-    const saveDisabled = !this.context.isAuthenticated();
-    const canBeSaved = !Yam.saved && this.context.isAuthenticated();
+    const { number, autoSave, pending } = this.state;
+    const authenticated = this.context.isAuthenticated();
+    const canBeSaved = authenticated && !pending && !Yam.saved;
 
     return (
       <Fragment>
@@ -88,9 +102,9 @@ export default class Home extends Component {
                   <Form.Text className="text-muted">For this game, the five dice will be rolled {number || 'x'} times.</Form.Text>
                 </Form.Group>
                 <Form.Group>
-                  <Form.Check id="switch" type="switch" label="Auto-save" defaultChecked={autoSave} disabled={saveDisabled} onChange={this.handleCheckbox} />
+                  <Form.Check id="switch" type="switch" label="Auto-save" defaultChecked={autoSave} disabled={!authenticated} onChange={this.handleCheckbox} />
                 </Form.Group>
-                <Button size="sm" type="submit">Roll dice</Button>
+                <Button size="sm" type="submit" disabled={pending}>Roll dice</Button>
               </Form>
             </Card.Body>
           </div>
@@ -102,7 +116,8 @@ export default class Home extends Component {
                 <div className="d-flex justify-content-between align-items-center">
                   <h5 className="mb-0">Results</h5>
                   <Button size="sm" disabled={!canBeSaved} onClick={() => this.save()}>
-                    {Yam.saved ? 'Saved' : 'Save'}
+                    {pending && <Spinner as="span" animation="border" size="sm" />}
+                    {pending ? ' Saving..' : Yam.saved ? 'Saved' : 'Save'}
                   </Button>
                 </div>
                 <p className="code">{JSON.stringify(Yam.data)}</p>
