@@ -1,5 +1,7 @@
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import logo from './logo.svg';
+import './App.css';
+
 import React, { Component } from 'react'
 import Firebase from 'firebase/app'
 import { UserContext } from './utils/Firebase'
@@ -58,7 +60,9 @@ export default class App extends Component {
         <UserContext.Provider value={this.UserContext}>
           <Navbar collapseOnSelect bg="dark" variant="dark" expand="sm" sticky="top">
             <Container>
-              <Navbar.Brand>Yam</Navbar.Brand>
+              <Navbar.Brand>
+                <img className="align-top" src={logo} width="30" height="30" />Yam
+              </Navbar.Brand>
               <Navbar.Toggle/>
               {!initialized
                 ? LoadingNavbar
