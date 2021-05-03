@@ -1,7 +1,7 @@
 import './Login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component, Fragment } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Card, Button, Form, Spinner } from 'react-bootstrap';
 import { UserContext } from '../../utils/Firebase'
 import Firebase from 'firebase/app';
 import Routes from '../../utils/Routes'
@@ -18,6 +18,8 @@ export default class Login extends Component {
     this.state = {
       email: '',
       password: '',
+      pending: false,
+      message: undefined
     };
   }
 
@@ -34,10 +36,11 @@ export default class Login extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
+    this.setState({ pending: true, message: undefined });
 
     Firebase.auth().signInWithEmailAndPassword(email, password)
       .then(this.onSuccess)
-      .catch(this.onError);
+      .catch(this.onError)
   }
 
   onSuccess = () => {
@@ -48,11 +51,12 @@ export default class Login extends Component {
     this.unsubscribe = Firebase.auth().onAuthStateChanged(redirect);
   }
   onError = (error) => {
-    console.log(error);
+    const message = error?.message ?? 'An unknown error has occurred.';
+    this.setState({ message, pending: false });
   }
 
   render() {
-    const { email, password } = this.state;
+    const { email, password, pending, message } = this.state;
 
     return (
       <Fragment>
@@ -71,9 +75,17 @@ export default class Login extends Component {
                 <Form.Label>Password</Form.Label>
                 <Form.Control required name="password" type="password" placeholder="Password" value={password} onChange={this.handleChange} />
               </Form.Group>
-              <Button size="sm" type="submit">Login</Button>
+              <Button size="sm" type="submit" disabled={pending}>
+                {pending && <Spinner as="span" animation="border" size="sm" />}
+                {pending ? ' Loading..' : 'Login'}
+              </Button>
             </Form>
           </Card.Body>
+          {message &&
+            <Card.Footer>
+              <small className="text-muted">{message}</small>
+            </Card.Footer>
+          }
         </Card>
       </Fragment>
     )
