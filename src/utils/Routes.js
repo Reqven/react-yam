@@ -1,6 +1,7 @@
 import React from 'react'
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, useLocation } from 'react-router-dom';
 import { UserContext } from './Firebase'
+
 
 const Routes = {
   HOME: '/',
@@ -10,13 +11,22 @@ const Routes = {
 }
 export default Routes;
 
+
 export const AuthenticatedRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = React.useContext(UserContext);
+  const location = useLocation();
+
+  const params = {
+    to: {
+      pathname: Routes.LOGIN,
+      state: { referrer: location.pathname }
+    }
+  };
 
   return (
     <Route {...rest} render={(props) => isAuthenticated()
       ? <Component {...props} />
-      : <Redirect to="/login" />
+      : <Redirect {...params} />
     }
     />
   )
