@@ -1,12 +1,10 @@
 import './History.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component, Fragment } from 'react';
 import { Card } from 'react-bootstrap';
 import Firebase from 'firebase/app';
 import { UserContext } from '../../utils/Firebase'
 import Yam from '../../utils/Yam'
-import YamListItem from '../../components/yam-list-item/YamListItem'
-import LoadingWidget from '../../components/loading-widget/LoadingWidget'
+import { LoadingWidget, YamListItem } from '../../components'
 
 
 export default class History extends Component {

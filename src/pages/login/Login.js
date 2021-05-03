@@ -1,5 +1,4 @@
 import './Login.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component, Fragment } from 'react';
 import { Card, Button, Form, Spinner } from 'react-bootstrap';
 import { UserContext } from '../../utils/Firebase'

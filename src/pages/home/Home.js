@@ -1,11 +1,10 @@
 import './Home.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component, Fragment } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
 import { UserContext } from '../../utils/Firebase'
 import Firebase from 'firebase/app';
 import Yam from '../../utils/Yam';
-import YamResults from '../../components/yam-results/YamResults'
+import { YamResults } from '../../components';
 
 
 export default class Home extends Component {

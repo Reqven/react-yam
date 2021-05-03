@@ -1,13 +1,11 @@
 import './Stats.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component, Fragment } from 'react';
+import Firebase from 'firebase/app'
 import * as moment from 'moment'
 import { Card } from 'react-bootstrap'
 import { UserContext } from '../../utils/Firebase'
 import Yam from '../../utils/Yam'
-import YamResults from '../../components/yam-results/YamResults'
-import LoadingWidget from '../../components/loading-widget/LoadingWidget'
-import Firebase from 'firebase/app'
+import { LoadingWidget, YamResults } from '../../components'
 
 
 export default class Stats extends Component {
