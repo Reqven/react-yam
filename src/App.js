@@ -7,8 +7,8 @@ import Firebase from 'firebase/app'
 import { UserContext } from './utils/Firebase'
 import { HashRouter as Router, NavLink, Route, Switch, Redirect } from 'react-router-dom';
 import { Container, Nav, Spinner, Navbar, NavDropdown } from 'react-bootstrap'
-import Routes, { AuthenticatedRoute } from './utils/Routes'
-import { Home, History, Stats, Login } from './pages';
+import Routes, { AuthenticatedRoute, NotAuthenticatedRoute } from './utils/Routes'
+import { Play, History, Stats, Login } from './pages';
 
 
 export default class App extends Component {
@@ -68,7 +68,7 @@ export default class App extends Component {
                 ? LoadingNavbar
                 : <Navbar.Collapse>
                     <Nav className="mr-auto">
-                      <Nav.Link exact eventKey={0} as={NavLink} to={Routes.HOME}>Play</Nav.Link>
+                      <Nav.Link exact eventKey={0} as={NavLink} to={Routes.PLAY}>Play</Nav.Link>
                       <Nav.Link exact eventKey={1} as={NavLink} to={Routes.HISTORY}>History</Nav.Link>
                       <Nav.Link exact eventKey={2} as={NavLink} to={Routes.STATS}>Stats</Nav.Link>
                     </Nav>
@@ -87,10 +87,11 @@ export default class App extends Component {
             <div className="content">
               <Container>
                 <Switch>
+                  <NotAuthenticatedRoute exact path={Routes.LOGIN} component={Login} />
                   <AuthenticatedRoute exact path={Routes.HISTORY} component={History} />
                   <AuthenticatedRoute exact path={Routes.STATS} component={Stats} />
-                  <Route exact path={Routes.HOME} component={Home} />
-                  <Route exact path={Routes.LOGIN} component={Login} />
+                  <Route exact path={Routes.PLAY} component={Play} />
+                  <Redirect from={Routes.HOME} to={Routes.PLAY} />
                   <Redirect to={Routes.HOME} />
                 </Switch>
               </Container>
