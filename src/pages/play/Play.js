@@ -1,10 +1,9 @@
 import './Play.css';
 import React, { Component, Fragment } from 'react';
-import { Card, Button, Form, Spinner } from 'react-bootstrap'
-import { UserContext } from '../../utils/Firebase'
-import Firebase from 'firebase/app';
-import Yam from '../../utils/Yam';
+import { Card, Button, Form, Spinner } from 'react-bootstrap';
+import { UserContext, Database } from '../../utils/Firebase';
 import { YamResults } from '../../components';
+import Yam from '../../utils/Yam';
 
 
 export default class Play extends Component {
@@ -52,7 +51,7 @@ export default class Play extends Component {
     if (!isAuthenticated()) { return; }
 
     this.setState({ pending: true });
-    const { id: time, data } = this.Yam;
+    const { id, time, data } = this.Yam;
     const value = { time, data };
 
     const onSuccess = () => {
@@ -65,11 +64,11 @@ export default class Play extends Component {
       }, 500);
     }
 
-    Firebase.database()
+    Database
       .ref('users')
       .child(user.uid)
       .child('history')
-      .child(time)
+      .child(id)
       .set(value)
         .then(onSuccess)
         .catch(console.log)

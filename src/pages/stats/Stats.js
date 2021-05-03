@@ -1,11 +1,10 @@
 import './Stats.css';
 import React, { Component, Fragment } from 'react';
-import Firebase from 'firebase/app'
-import * as moment from 'moment'
-import { Card } from 'react-bootstrap'
-import { UserContext } from '../../utils/Firebase'
-import Yam from '../../utils/Yam'
-import { LoadingWidget, YamResults } from '../../components'
+import * as moment from 'moment';
+import { Card } from 'react-bootstrap';
+import { Database, UserContext } from '../../utils/Firebase'
+import { LoadingWidget, YamResults } from '../../components';
+import Yam from '../../utils/Yam';
 
 
 export default class Stats extends Component {
@@ -26,13 +25,12 @@ export default class Stats extends Component {
 
   componentDidMount() {
     const { user } = this.context;
+    this.reference = Database
+      .ref('users')
+      .child(user.uid)
+      .child('history');
 
     this.timeout = setTimeout(() => {
-      this.reference = Firebase.database()
-        .ref('users')
-        .child(user.uid)
-        .child('history');
-
       this.reference.on('value', this.handleSnapshot, this.handleError);
     }, 500);
   }

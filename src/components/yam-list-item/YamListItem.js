@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Button } from 'react-bootstrap';
-import YamResults from '../yam-results/YamResults'
-import * as moment from 'moment'
+import YamResults from '../yam-results/YamResults';
+import * as moment from 'moment';
 
 
 const YamListItem = ({ yam }) => {

@@ -17,4 +17,11 @@ const config = {
 
 Firebase.initializeApp(config);
 
+export default Firebase;
+export const Auth = Firebase.auth();
+export const Database = Firebase.database();
 export const UserContext = React.createContext({ user: null });
+
+export const createUniqueKey = () => {
+  return Database.ref('/').push().key;
+}

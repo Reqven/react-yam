@@ -1,3 +1,5 @@
+import { createUniqueKey } from './Firebase';
+
 const initialState = {
   id: undefined,
   time: undefined,
@@ -14,7 +16,8 @@ export default class Yam {
 
   play(throws = 1) {
     this.reset();
-    this.id = this.time = new Date().getTime();
+    this.id = createUniqueKey();
+    this.time = new Date().getTime();
     this.data = [...Array(throws)].map(() => Yam.dice(5));
     return this.calc();
   }

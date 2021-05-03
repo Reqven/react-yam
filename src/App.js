@@ -2,12 +2,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './logo.svg';
 import './App.css';
 
-import React, { Component } from 'react'
-import Firebase from 'firebase/app'
-import { UserContext } from './utils/Firebase'
+import React, { Component } from 'react';
+import { Auth, UserContext } from './utils/Firebase';
 import { HashRouter as Router, NavLink, Route, Switch, Redirect } from 'react-router-dom';
-import { Container, Nav, Spinner, Navbar, NavDropdown } from 'react-bootstrap'
-import Routes, { AuthenticatedRoute, NotAuthenticatedRoute } from './utils/Routes'
+import { Container, Nav, Spinner, Navbar, NavDropdown } from 'react-bootstrap';
+import Routes, { AuthenticatedRoute, NotAuthenticatedRoute } from './utils/Routes';
 import { Play, History, Stats, Login } from './pages';
 
 
@@ -23,7 +22,7 @@ export default class App extends Component {
   }
 
   componentDidMount () {
-    this.unsubscribe = Firebase.auth().onAuthStateChanged(user => {
+    this.unsubscribe = Auth.onAuthStateChanged(user => {
       this.setState({ user, initialized: true });
     });
   }
@@ -76,7 +75,7 @@ export default class App extends Component {
                       ? <Nav.Link exact eventKey={3} as={NavLink} to={Routes.LOGIN}>Login</Nav.Link>
                       : <NavDropdown title="Account" alignRight>
                           <NavDropdown.Header>{user.email}</NavDropdown.Header>
-                          <NavDropdown.Item eventKey={4} onClick={() => Firebase.auth().signOut()}>Logout</NavDropdown.Item>
+                          <NavDropdown.Item eventKey={4} onClick={() => Auth.signOut()}>Logout</NavDropdown.Item>
                         </NavDropdown>
                     }</Nav>
                   </Navbar.Collapse>

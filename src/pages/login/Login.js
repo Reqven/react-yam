@@ -1,9 +1,8 @@
 import './Login.css';
 import React, { Component, Fragment } from 'react';
 import { Card, Button, Form, Spinner } from 'react-bootstrap';
-import { UserContext } from '../../utils/Firebase'
-import Firebase from 'firebase/app';
-import Routes from '../../utils/Routes'
+import { Auth, UserContext } from '../../utils/Firebase';
+import Routes from '../../utils/Routes';
 
 
 export default class Login extends Component {
@@ -37,7 +36,7 @@ export default class Login extends Component {
     const { email, password } = this.state;
     this.setState({ pending: true, message: undefined });
 
-    Firebase.auth().signInWithEmailAndPassword(email, password)
+    Auth.signInWithEmailAndPassword(email, password)
       .then(this.onSuccess)
       .catch(this.onError)
   }
@@ -47,7 +46,7 @@ export default class Login extends Component {
     const pathname = location.state?.referrer || Login.defaultRedirect;
 
     const redirect = (user) => user ? history.push(pathname) : null;
-    this.unsubscribe = Firebase.auth().onAuthStateChanged(redirect);
+    this.unsubscribe = Auth.onAuthStateChanged(redirect);
   }
   onError = (error) => {
     const message = error?.message ?? 'An unknown error has occurred.';
